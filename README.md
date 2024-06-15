@@ -1,12 +1,12 @@
-#**Promise Class for Asynchronous-like Behavior in Python**
+#Promise Class for Asynchronous-like Behavior in Python
 
 This file provides a `Promise` class that can be used to simulate asynchronous behavior in Python using threads and callbacks.
 
-##**Installation**
+##Installation
 
 There's no installation required for this code. You can simply copy the `promise.py` file to your project directory and import it into your Python scripts.
 
-##**Usage**
+##Usage
 
 1. **Import the `Promise` class:**
 
@@ -58,7 +58,7 @@ There's no installation required for this code. You can simply copy the `promise
    promise.catch(handle_error)
    ```
 
-##**Example Usage:**
+##Example Usage:
 
 ```python
 from promise import Promise
@@ -80,15 +80,15 @@ if __name__ == "__main__":
     main()
 ```
 
-##**Important Notes:**
+##Important Notes:
 
 - This approach simulates asynchronous behavior using threads and callbacks. Python has built-in mechanisms for asynchronous programming using the `async`/`await` keywords, but this example demonstrates a callback-based solution.
 - For complex asynchronous tasks, consider using libraries like `concurrent.futures` or third-party asynchronous libraries in Python.
 
-##**Thread Safety:**
+##Thread Safety:
 
 - The `threading.Lock` object is used to ensure thread-safe access to the promise's internal state. This is crucial when multiple threads might interact with the same promise object.
 
-##**Disclaimer:**
+##Disclaimer:
 
 - Using threads can introduce complexity to your code. Consider using higher-level abstractions for asynchronous programming in Python whenever possible.
