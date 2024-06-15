@@ -58,6 +58,34 @@ There's no installation required for this code. You can simply copy the `promise
    promise.catch(handle_error)
    ```
 
+7. **Reject promise (Optional)**
+
+   - Sometimes an error might occasionally occur an error after calling the promise in the main thread. So the promise isn’t nessesary anymore. Then you can reject the promise with `reject`. After rejecting the promise and passing the reason (error), the catch will be called.
+   
+   ```python
+   def function():
+       promise = Promise()
+
+       def my_async_operation():
+          import time
+          time.sleep(2)  # Simulate asynchronous work
+          return "Asynchronous result"
+
+       promise.resolve(lambda: my_async_operation)
+   
+       try:
+           #error occur here so the promise isnt nessesary.
+       except Exception as e:
+           promise.reject(e)
+       
+       return promise
+    
+    promise = function()
+    promise.then(lambda result: print("Success:", result))
+    promise.catch(lambda error: print("Error:", error)) # Will be called
+
+   ```
+   
 ## Example Usage:
 
 ```python
