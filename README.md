@@ -36,7 +36,7 @@ There's no installation required for this code. You can simply copy the `promise
        return "Asynchronous result"
 
    # Call the asynchronous operation and resolve the promise
-   promise.resolve(my_async_operation)
+   promise.resolve(lambda: my_async_operation)
    ```
 
 5. **Handle successful completion (optional):**
@@ -71,7 +71,7 @@ def main():
         time.sleep(2)  # Simulate asynchronous work
         return "Asynchronous result"
 
-    promise.resolve(my_async_operation)
+    promise.resolve(lambda: my_async_operation)
 
     promise.then(lambda result: print("Success:", result))
     promise.catch(lambda error: print("Error:", error))
