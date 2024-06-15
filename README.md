@@ -108,11 +108,6 @@ if __name__ == "__main__":
     main()
 ```
 
-## Important Notes:
-
-- This approach simulates asynchronous behavior using threads and callbacks. Python has built-in mechanisms for asynchronous programming using the `async`/`await` keywords, but this example demonstrates a callback-based solution.
-- For complex asynchronous tasks, consider using libraries like `concurrent.futures` or third-party asynchronous libraries in Python.
-
 ## Thread Safety:
 
 - The `threading.Lock` object is used to ensure thread-safe access to the promise's internal state. This is crucial when multiple threads might interact with the same promise object.
