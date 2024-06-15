@@ -32,12 +32,15 @@ class Promise:
     def do_resolve(self, value):
         with self.lock:
             if not self.resolved and not self.rejected:
-                v = value()
-                if v:
-                    self.value = v
-                    self.resolved = True
-                    if self.then_callback:
-                        self.then_callback(v)
+                try:
+                    v = value()
+                    if v:
+                        self.value = v
+                        self.resolved = True
+                        if self.then_callback:
+                            self.then_callback(v)
+                except Exception as e:
+                    self.reject(e)
 
     def reject(self, error):
         with self.lock:
