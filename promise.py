@@ -65,9 +65,9 @@ class Promise:
         """
         try:
             v = value()
-            self._set_result(v)
+            self.__set_result(v)
         except Exception as e:
-            self._set_error(e)
+            self.__set_error(e)
 
     def reject(self, error):
         """
@@ -76,9 +76,9 @@ class Promise:
         Args:
             error: The error to reject the promise with.
         """
-        self._set_error(error)
+        self.__set_error(error)
 
-    def _set_result(self, value):
+    def __set_result(self, value):
         """
         Sets the result of the promise to a given value.
 
@@ -92,7 +92,7 @@ class Promise:
                 if self.then_callback:
                     self.then_callback(value)
 
-    def _set_error(self, error):
+    def __set_error(self, error):
         """
         Sets the error of the promise to a given error.
 
