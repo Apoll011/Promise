@@ -1,117 +1,143 @@
-# Promise Class for Asynchronous-like Behavior in Python
+# Python Promise Library
 
-This file provides a `Promise` class that can be used to simulate asynchronous behavior in Python using threads and callbacks.
+A lightweight, thread-safe Promise implementation for Python that brings JavaScript-style Promise functionality to your Python applications.
+
+## Overview
+
+This library provides a Promise class that represents a value which may be available now, or in the future, or never. It follows the same conceptual model as JavaScript Promises, allowing for cleaner asynchronous code without deeply nested callbacks.
+
+## Features
+
+- Thread-safe implementation using locks
+- Chainable API with `then()` and `catch()` methods
+- Automatic error propagation
+- Support for asynchronous value resolution
+- Minimal dependencies (only uses Python's standard `threading` module)
 
 ## Installation
 
-There's no installation required for this code. You can simply copy the `promise.py` file to your project directory and import it into your Python scripts.
+```bash
+# Coming soon to PyPI
+pip install python-promise
+```
 
 ## Usage
 
-1. **Import the `Promise` class:**
-
-   ```python
-   from promise import Promise
-   ```
-
-2. **Create a `Promise` instance:**
-
-   ```python
-   promise = Promise()
-   ```
-
-3. **Define asynchronous operations:**
-
-   - You'll need to implement your own asynchronous operations (functions that take some time to complete). These functions should return the result value when successful.
-
-4. **Resolve the promise:**
-
-   - Once your asynchronous operation completes, call the `resolve` method of the promise object, passing the result value as an argument. This will trigger any registered `then` callback.
-
-   ```python
-   def my_async_operation():
-       # Simulate some asynchronous work (e.g., network request, file I/O)
-       import time
-       time.sleep(2)  # Replace with your actual asynchronous operation
-       return "Asynchronous result"
-
-   # Call the asynchronous operation and resolve the promise
-   promise.resolve(lambda: my_async_operation)
-   ```
-
-5. **Handle successful completion (optional):**
-
-   - Use the `then` method to register a callback function that will be executed when the promise is resolved. This callback function will receive the result value from the asynchronous operation.
-
-   ```python
-   promise.then(lambda result: print("Success:", result))
-   ```
-
-6. **Handle errors (optional):**
-
-   - Use the `catch` method to register a callback function that will be executed if the promise is rejected due to an error during the asynchronous operation. This callback function will receive the error object.
-
-   ```python
-   def handle_error(error):
-       print("Error:", error)
-
-   promise.catch(handle_error)
-   ```
-
-7. **Reject promise (Optional)**
-
-   - Sometimes an error might occasionally occur an error after calling the promise in the main thread. So the promise isn’t nessesary anymore. Then you can reject the promise with `reject`. After rejecting the promise and passing the reason (error), the catch will be called.
-   
-   ```python
-   def function():
-       promise = Promise()
-
-       def my_async_operation():
-          import time
-          time.sleep(2)  # Simulate asynchronous work
-          return "Asynchronous result"
-
-       promise.resolve(lambda: my_async_operation)
-   
-       try:
-           #error occur here so the promise isnt nessesary.
-       except Exception as e:
-           promise.reject(e)
-       
-       return promise
-    
-    promise = function()
-    promise.then(lambda result: print("Success:", result))
-    promise.catch(lambda error: print("Error:", error)) # Will be called
-
-   ```
-   
-## Example Usage:
+### Basic Usage
 
 ```python
 from promise import Promise
 
-def main():
-    promise = Promise()
+# Create a new promise
+promise = Promise()
 
-    def my_async_operation():
-        import time
-        time.sleep(2)  # Simulate asynchronous work
-        return "Asynchronous result"
+# Define success and error handlers
+def on_success(value):
+    print(f"Success: {value}")
 
-    promise.resolve(lambda: my_async_operation)
+def on_error(error):
+    print(f"Error: {error}")
 
-    promise.then(lambda result: print("Success:", result))
-    promise.catch(lambda error: print("Error:", error))
+# Register callbacks
+promise.then(on_success).catch(on_error)
 
-if __name__ == "__main__":
-    main()
+# Resolve the promise
+promise.resolve(lambda: "Hello, World!")
 ```
 
-## Thread Safety:
+### Asynchronous Operations
 
-- The `threading.Lock` object is used to ensure thread-safe access to the promise's internal state. This is crucial when multiple threads might interact with the same promise object.
+```python
+import time
+from promise import Promise
 
-## Disclaimer:
+def fetch_data():
+    # Simulate network request
+    time.sleep(2)
+    return {"data": "Some important data"}
 
-- Using threads can introduce complexity to your code. Consider using higher-level abstractions for asynchronous programming in Python whenever possible.
+# Create and immediately start resolving a promise
+promise = Promise()
+promise.resolve(fetch_data)
+
+# The callback will be executed once the data is available
+promise.then(lambda data: print(f"Received: {data}"))
+
+print("Fetching data in background...")
+# Continue doing other work while the promise resolves
+```
+
+### Error Handling
+
+```python
+from promise import Promise
+
+def risky_operation():
+    # This will raise an exception
+    return 1 / 0
+
+promise = Promise()
+promise.then(lambda value: print(f"This won't run: {value}"))
+promise.catch(lambda error: print(f"Caught an error: {error}"))
+
+# The error will be caught and handled
+promise.resolve(risky_operation)
+```
+
+## API Reference
+
+### `Promise()`
+
+Creates a new Promise object.
+
+### `Promise.then(callback)`
+
+Registers a callback to be called when the promise is resolved.
+
+- **Parameters:**
+  - `callback`: A function that takes the resolved value as its single parameter
+- **Returns:** The promise object (for chaining)
+
+### `Promise.catch(callback)`
+
+Registers a callback to be called when the promise is rejected.
+
+- **Parameters:**
+  - `callback`: A function that takes the error as its single parameter
+- **Returns:** The promise object (for chaining)
+
+### `Promise.resolve(value)`
+
+Resolves the promise with a given value.
+
+- **Parameters:**
+  - `value`: A function that returns the value to resolve the promise with
+
+### `Promise.reject(error)`
+
+Rejects the promise with a given error.
+
+- **Parameters:**
+  - `error`: The error to reject the promise with
+
+## Implementation Details
+
+The Promise implementation uses Python's threading module to handle asynchronous operations:
+
+- Each promise has a thread lock to ensure thread safety
+- Resolution is handled in a separate thread to avoid blocking
+- Callbacks are executed immediately if the promise is already resolved/rejected when they're registered
+
+## Limitations
+
+- Unlike JavaScript Promises, this implementation does not support `Promise.all()` or `Promise.race()` yet
+- Promises are resolved in separate threads rather than an event loop
+- The value provided to `resolve()` must be callable (a function or lambda)
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
